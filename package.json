@@ -1,0 +1,28 @@
+{
+  "name": "eca-trainable-bot-next",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "5.18.0",
+    "next": "14.2.6",
+    "openai": "4.57.0",
+    "prisma": "5.18.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "resend": "3.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "14.2.6",
+    "typescript": "^5.0.0"
+  }
+}

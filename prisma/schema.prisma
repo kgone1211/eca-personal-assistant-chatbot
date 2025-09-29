@@ -1,0 +1,131 @@
+datasource db { 
+  provider = "postgresql" 
+  url      = env("DATABASE_URL") 
+}
+
+generator client { 
+  provider = "prisma-client-js" 
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String?   
+  licenseKey     String    @unique
+  createdAt      DateTime  @default(now())
+  lastTrainedAt  DateTime?
+  timezone       String    @default("America/New_York")
+  trainingBlobs  TrainingBlob[]
+  messages       MessageLog[]
+  answers        TrainingAnswer[]
+  projects       Project[]
+  trendAnalyses  TrendAnalysis[]
+}
+
+model TrainingBlob {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  kind         String   // "otter" | "qa"
+  content      String
+  createdAt    DateTime @default(now())
+  voiceVersion Int      @default(1)
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model MessageLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  role      String   // "system" | "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model TrainingAnswer {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  qId       Int
+  answer    String   @default("")
+  version   Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, qId])
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  name        String
+  description String?
+  status      String   @default("active") // active, completed, paused, archived
+  clientName  String?
+  clientEmail String?
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+  milestones  Milestone[]
+  transcripts Transcript[]
+  insights    ProjectInsight[]
+}
+
+model Milestone {
+  id          Int      @id @default(autoincrement())
+  projectId   Int
+  title       String
+  description String?
+  status      String   @default("pending") // pending, in_progress, completed
+  dueDate     DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id])
+}
+
+model Transcript {
+  id          Int      @id @default(autoincrement())
+  projectId   Int
+  title       String
+  content     String
+  callDate    DateTime @default(now())
+  duration    Int?     // in minutes
+  participants String? // comma-separated list
+  tags        String? // comma-separated tags
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id])
+  analysis    TranscriptAnalysis?
+}
+
+model TranscriptAnalysis {
+  id           Int      @id @default(autoincrement())
+  transcriptId Int      @unique
+  summary      String
+  keyPoints    String   // JSON array of key points
+  painPoints   String   // JSON array of pain points
+  opportunities String  // JSON array of opportunities
+  actionItems  String   // JSON array of action items
+  sentiment    String   // positive, negative, neutral, mixed
+  confidence   Float    // 0-1 confidence score
+  createdAt    DateTime @default(now())
+  transcript   Transcript @relation(fields: [transcriptId], references: [id])
+}
+
+model ProjectInsight {
+  id          Int      @id @default(autoincrement())
+  projectId   Int
+  type        String   // bottleneck, opportunity, success_pattern, risk
+  title       String
+  description String
+  severity    String   // low, medium, high, critical
+  status      String   @default("open") // open, in_progress, resolved, dismissed
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  project     Project  @relation(fields: [projectId], references: [id])
+}
+
+model TrendAnalysis {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  analysisData String   // JSON string containing trend analysis results
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+}

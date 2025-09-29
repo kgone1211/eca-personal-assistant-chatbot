@@ -1,0 +1,206 @@
+:root { 
+  --pad:14px; 
+  --gap:10px; 
+  --bg:#0f1115; 
+  --card:#171a21; 
+  --ink:#e8eaed; 
+  --muted:#aab2c0; 
+  --acc:#8fd6ff; 
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+
+.wrap{max-width:800px;margin:0 auto;padding:var(--pad)}
+
+.chat-container{
+  display:flex;
+  flex-direction:column;
+  height:80vh;
+  background:var(--card);
+  border:1px solid #2a2f3a;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.chat-header{
+  padding:var(--pad);
+  border-bottom:1px solid #2a2f3a;
+  background:#0b0d11;
+}
+
+.chat-messages{
+  flex:1;
+  overflow-y:auto;
+  padding:var(--pad);
+  display:flex;
+  flex-direction:column;
+  gap:var(--gap);
+}
+
+.message{
+  display:flex;
+  gap:12px;
+  margin-bottom:var(--gap);
+}
+
+.message.user{
+  flex-direction:row-reverse;
+}
+
+.message-avatar{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  flex-shrink:0;
+}
+
+.message.user .message-avatar{
+  background:var(--acc);
+  color:#0f1115;
+}
+
+.message.assistant .message-avatar{
+  background:#2a2f3a;
+  color:var(--ink);
+}
+
+.message-content{
+  flex:1;
+  max-width:70%;
+}
+
+.message.user .message-content{
+  text-align:right;
+}
+
+.message-bubble{
+  background:#2a2f3a;
+  padding:12px 16px;
+  border-radius:12px;
+  word-wrap:break-word;
+}
+
+.message.user .message-bubble{
+  background:var(--acc);
+  color:#0f1115;
+}
+
+.message-time{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.chat-input{
+  padding:var(--pad);
+  border-top:1px solid #2a2f3a;
+  background:#0b0d11;
+}
+
+.input-form{
+  display:flex;
+  gap:8px;
+}
+
+.input-field{
+  flex:1;
+  background:#171a21;
+  color:var(--ink);
+  border:1px solid #2a2f3a;
+  border-radius:8px;
+  padding:12px 16px;
+  font-size:14px;
+  resize:none;
+  min-height:44px;
+  max-height:120px;
+}
+
+.input-field:focus{
+  outline:none;
+  border-color:var(--acc);
+}
+
+.send-btn{
+  background:var(--acc);
+  color:#0f1115;
+  border:none;
+  border-radius:8px;
+  padding:12px 20px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:600;
+  transition:all 0.2s ease;
+}
+
+.send-btn:hover{
+  background:#7bc5e8;
+}
+
+.send-btn:disabled{
+  background:#2a2f3a;
+  color:var(--muted);
+  cursor:not-allowed;
+}
+
+.loading{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.loading-dots{
+  display:flex;
+  gap:4px;
+}
+
+.loading-dot{
+  width:4px;
+  height:4px;
+  background:var(--muted);
+  border-radius:50%;
+  animation:loading 1.4s infinite ease-in-out;
+}
+
+.loading-dot:nth-child(1){animation-delay:-0.32s}
+.loading-dot:nth-child(2){animation-delay:-0.16s}
+
+@keyframes loading{
+  0%,80%,100%{transform:scale(0)}
+  40%{transform:scale(1)}
+}
+
+.error{
+  background:#4a2c2a;
+  color:#ff8e8e;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:var(--gap);
+  font-size:14px;
+}
+
+.empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  color:var(--muted);
+  text-align:center;
+}
+
+.empty-state h3{
+  margin:0 0 8px 0;
+  color:var(--ink);
+}
+
+.empty-state p{
+  margin:0;
+  font-size:14px;
+}

@@ -1,0 +1,41 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="metallicGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#B8860B;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#CD7F32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Outer hexagonal frame -->
+  <polygon points="30,5 50,15 50,35 30,45 10,35 10,15" 
+           fill="url(#metallicGold)" 
+           stroke="#8B4513" 
+           stroke-width="1"
+           filter="url(#shadow)"/>
+  
+  <!-- Deep purple interior -->
+  <polygon points="30,8 47,16 47,32 30,40 13,32 13,16" 
+           fill="#4B0082"/>
+  
+  <!-- Inner geometric pattern - Top chevron -->
+  <polygon points="20,20 30,15 40,20" 
+           fill="url(#metallicGold)" 
+           stroke="#8B4513" 
+           stroke-width="0.5"/>
+  
+  <!-- Inner geometric pattern - Horizontal lines -->
+  <rect x="18" y="25" width="24" height="3" fill="url(#metallicGold)" stroke="#8B4513" stroke-width="0.5"/>
+  <rect x="20" y="30" width="20" height="2" fill="url(#metallicGold)" stroke="#8B4513" stroke-width="0.5"/>
+  
+  <!-- Inner geometric pattern - Bottom chevron -->
+  <polygon points="20,35 30,40 40,35" 
+           fill="url(#metallicGold)" 
+           stroke="#8B4513" 
+           stroke-width="0.5"/>
+</svg>
