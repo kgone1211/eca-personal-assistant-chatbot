@@ -128,7 +128,13 @@ export default function TrainerClient(){
         const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
         console.log("Microphone access granted");
         
-        mediaRecorder = new MediaRecorder(stream);
+        // Try to use a more compatible audio format
+        const options = { mimeType: 'audio/webm;codecs=opus' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+          console.warn("WebM not supported, falling back to default");
+        }
+        
+        mediaRecorder = new MediaRecorder(stream, options);
         chunks = [];
         mediaRecorder.ondataavailable = e => { 
           if (e.data.size>0) {

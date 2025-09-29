@@ -39,8 +39,16 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    // Create a new File object with proper name and type
-    const audioFile = new File([buffer], "recording.webm", { type: "audio/webm" });
+    // Try different file formats for better compatibility
+    let audioFile: File;
+    if (file.type.includes('webm')) {
+      audioFile = new File([buffer], "recording.webm", { type: "audio/webm" });
+    } else if (file.type.includes('mp4')) {
+      audioFile = new File([buffer], "recording.mp4", { type: "audio/mp4" });
+    } else {
+      // Default to webm
+      audioFile = new File([buffer], "recording.webm", { type: "audio/webm" });
+    }
     
     const transcription = await openai.audio.transcriptions.create({
       file: audioFile,
