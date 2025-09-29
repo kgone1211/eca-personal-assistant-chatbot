@@ -63,7 +63,9 @@ export default function BotChatClient() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get response from AI");
+        const errorText = await response.text();
+        console.error("Chat API error:", response.status, errorText);
+        throw new Error(`Failed to get response from AI: ${response.status} ${errorText}`);
       }
 
       const result = await response.json();

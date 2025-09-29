@@ -14,7 +14,9 @@ async function latestCoachNotes(userId: number){
 }
 
 export async function POST(req: NextRequest) {
+  console.log("Chat API called");
   const { user } = await authUser(req);
+  console.log("Auth result:", { user: user ? { id: user.id, licenseKey: user.licenseKey } : null });
   if (!user) return NextResponse.json({ error:"Unauthorized" }, { status:401 });
   const form = await req.formData();
   const message = String(form.get("message") || "");
