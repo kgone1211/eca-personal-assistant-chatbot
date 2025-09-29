@@ -272,15 +272,6 @@ export default function TrainerClient(){
             <button className="btn" id="micBtn" style={{ userSelect: "none" }}>🎤 Hold to record</button>
             <span id="micStatus" className="small"></span>
 
-            <button className="btn" onClick={async () => {
-              const manualText = prompt("Type your answer manually:");
-              if (manualText) {
-                const merged = (answer ? answer + " " : "") + manualText;
-                setAnswer(merged);
-                paintGuard(merged);
-                await save();
-              }
-            }}>✍️ Manual input</button>
 
             <label className="btn" htmlFor="prefillFile">Pre-fill from file</label>
             <input id="prefillFile" type="file" accept=".txt,.docx" onChange={(e)=> e.target.files && e.target.files[0] && prefillFile(e.target.files[0])} />
