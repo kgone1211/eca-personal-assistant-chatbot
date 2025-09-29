@@ -1,6 +1,4 @@
-// Grok API integration for trend analysis
-// Note: This is a placeholder implementation since Grok API details may vary
-// You'll need to replace this with actual Grok API client when available
+// Grok API integration for trend analysis using xAI API
 
 interface GrokTrendAnalysis {
   trendingTopics: Array<{
@@ -36,7 +34,7 @@ class GrokClient {
 
   constructor() {
     this.apiKey = process.env.GROK_API_KEY || '';
-    this.baseUrl = process.env.GROK_BASE_URL || 'https://api.grok.com/v1';
+    this.baseUrl = 'https://api.x.ai/v1'; // xAI API endpoint
   }
 
   async analyzeTrends(data: {
@@ -59,10 +57,11 @@ class GrokClient {
       createdAt: string;
     }>;
   }): Promise<GrokTrendAnalysis> {
-    // For now, we'll simulate Grok analysis using OpenAI
-    // Replace this with actual Grok API calls when available
-    const { openai } = await import('./openai');
-    
+    if (!this.apiKey) {
+      console.warn('Grok API key not found, falling back to OpenAI');
+      return this.fallbackToOpenAI(data);
+    }
+
     const prompt = `
     Analyze the following coaching data to identify trends, patterns, and insights:
 
@@ -74,6 +73,74 @@ class GrokClient {
 
     EXISTING INSIGHTS:
     ${data.insights.map(i => `${i.type}: ${i.title} - ${i.description}`).join('\n')}
+
+    Please analyze this data and provide:
+    1. Trending topics with frequency and sentiment
+    2. Effective coaching patterns
+    3. Client insights and pain points
+    4. Actionable recommendations
+
+    Format as JSON with the following structure:
+    {
+      "trendingTopics": [{"topic": "string", "frequency": number, "sentiment": "positive|negative|neutral", "trendDirection": "up|down|stable", "confidence": number}],
+      "coachingPatterns": [{"pattern": "string", "effectiveness": number, "frequency": number, "description": "string"}],
+      "clientInsights": [{"insight": "string", "category": "pain_point|opportunity|success_pattern|risk", "severity": "low|medium|high|critical", "confidence": number}],
+      "recommendations": [{"recommendation": "string", "priority": "low|medium|high", "impact": "string", "action": "string"}]
+    }
+    `;
+
+    try {
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'grok-beta',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Grok, an expert data analyst specializing in coaching trends and client behavior patterns. Analyze the provided data and return structured JSON insights.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 2000
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Grok API error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      const content = result.choices[0].message?.content || '{}';
+      return JSON.parse(content);
+    } catch (error) {
+      console.error('Error calling Grok API:', error);
+      // Fallback to OpenAI if Grok fails
+      return this.fallbackToOpenAI(data);
+    }
+  }
+
+  private async fallbackToOpenAI(data: any): Promise<GrokTrendAnalysis> {
+    const { openai } = await import('./openai');
+    
+    const prompt = `
+    Analyze the following coaching data to identify trends, patterns, and insights:
+
+    TRANSCRIPTS:
+    ${data.transcripts.map((t: any) => `Date: ${t.callDate}\nContent: ${t.content.slice(0, 1000)}...`).join('\n\n')}
+
+    TRAINING DATA:
+    ${data.trainingBlobs.map((b: any) => `Version: ${b.voiceVersion}\nContent: ${b.content.slice(0, 1000)}...`).join('\n\n')}
+
+    EXISTING INSIGHTS:
+    ${data.insights.map((i: any) => `${i.type}: ${i.title} - ${i.description}`).join('\n')}
 
     Please analyze this data and provide:
     1. Trending topics with frequency and sentiment
@@ -109,7 +176,7 @@ class GrokClient {
       const response = completion.choices[0].message?.content || '{}';
       return JSON.parse(response);
     } catch (error) {
-      console.error('Error analyzing trends:', error);
+      console.error('Error analyzing trends with OpenAI fallback:', error);
       // Return mock data for development
       return this.getMockTrendAnalysis();
     }
