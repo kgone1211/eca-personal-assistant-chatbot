@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       transcripts: transcripts.map(t => ({
         content: t.content,
         callDate: t.callDate.toISOString(),
-        participants: t.participants,
+        participants: t.participants || undefined,
         analysis: t.analysis
       })),
       trainingBlobs: trainingBlobs.map(b => ({
