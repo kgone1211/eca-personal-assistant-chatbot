@@ -141,6 +141,13 @@ export default function TrainerClient(){
           const blob = new Blob(chunks, { type: "audio/webm;codecs=opus" });
           console.log("Audio blob created:", blob.size, "bytes, type:", blob.type);
           
+          // Check if we have any audio data
+          if (blob.size === 0) {
+            status.textContent = "No audio recorded - try again";
+            setTimeout(() => status.textContent = "", 3000);
+            return;
+          }
+          
           const fd = new FormData();
           fd.append("file", blob, "recording.webm");
           status.textContent = "Transcribing…";
@@ -149,33 +156,39 @@ export default function TrainerClient(){
             const r = await fetch("/api/trainer/whisper", { method:"POST", headers: hForm(), body: fd });
             const j = await r.json();
             
-            if (r.ok) {
-              const merged = (answer ? answer + " " : "") + (j.text || "");
-              setAnswer(merged);
-              paintGuard(merged);
-              await save();
-              status.textContent = "Transcribed and saved";
-              setTimeout(()=> status.textContent = "", 1500);
+            if (r.ok && j.text) {
+              const transcribedText = j.text.trim();
+              if (transcribedText.length > 0) {
+                const merged = (answer ? answer + " " : "") + transcribedText;
+                setAnswer(merged);
+                paintGuard(merged);
+                await save();
+                status.textContent = "✓ Transcribed and saved";
+                setTimeout(() => status.textContent = "", 2000);
+              } else {
+                status.textContent = "No speech detected - try speaking louder";
+                setTimeout(() => status.textContent = "", 3000);
+              }
             } else {
               console.error("Transcription failed:", r.status, r.statusText, j);
-              // Show a helpful message and let user type manually
+              // Use the error message from the API if available
               const errorText = j.text || "[Transcription failed - please type your answer manually]";
               const merged = (answer ? answer + " " : "") + errorText;
               setAnswer(merged);
               paintGuard(merged);
               await save();
               status.textContent = "Transcription failed - please type manually";
-              setTimeout(()=> status.textContent = "", 5000);
+              setTimeout(() => status.textContent = "", 5000);
             }
           } catch (error) {
             console.error("Transcription error:", error);
-            const errorText = "[Transcription error - check API configuration]";
+            const errorText = "[Transcription error - please use manual input]";
             const merged = (answer ? answer + " " : "") + errorText;
             setAnswer(merged);
             paintGuard(merged);
             await save();
-            status.textContent = "Transcription error - check console";
-            setTimeout(()=> status.textContent = "", 3000);
+            status.textContent = "Transcription error - use manual input";
+            setTimeout(() => status.textContent = "", 3000);
           }
         };
         mediaRecorder.start();
