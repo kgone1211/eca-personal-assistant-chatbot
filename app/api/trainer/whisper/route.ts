@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     });
 
     console.log("Whisper API response received");
-    const text = (transcription as string) || "";
+    const text = (transcription as unknown as string) || "";
     
     if (!text || text.trim().length === 0) {
       return NextResponse.json({ 
