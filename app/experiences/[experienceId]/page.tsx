@@ -34,7 +34,8 @@ export default function WhopExperiencePage() {
       margin: '0 auto',
       padding: '20px',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#1a1a1a',
+      color: '#ffffff',
       minHeight: '100vh'
     }}>
       {/* Header */}
@@ -42,19 +43,19 @@ export default function WhopExperiencePage() {
         textAlign: 'center',
         marginBottom: '40px',
         paddingBottom: '20px',
-        borderBottom: '1px solid #e5e7eb'
+        borderBottom: '1px solid #333333'
       }}>
         <h1 style={{
           fontSize: '32px',
           fontWeight: '700',
-          color: '#1f2937',
+          color: '#ffffff',
           margin: '0 0 8px 0'
         }}>
           EVA Personal Assistant
         </h1>
         <p style={{
           fontSize: '16px',
-          color: '#6b7280',
+          color: '#cccccc',
           margin: '0'
         }}>
           Your AI coaching assistant powered by Elite Coaching Academy
@@ -62,7 +63,7 @@ export default function WhopExperiencePage() {
         {experienceId && (
           <p style={{
             fontSize: '14px',
-            color: '#9ca3af',
+            color: '#999999',
             margin: '8px 0 0 0'
           }}>
             Experience ID: {experienceId}
@@ -72,8 +73,8 @@ export default function WhopExperiencePage() {
 
       {/* Welcome Message */}
       <div style={{
-        backgroundColor: '#f0f9ff',
-        border: '1px solid #0ea5e9',
+        backgroundColor: '#2a2a2a',
+        border: '1px solid #444444',
         borderRadius: '12px',
         padding: '24px',
         marginBottom: '32px',
@@ -82,14 +83,14 @@ export default function WhopExperiencePage() {
         <h2 style={{
           fontSize: '24px',
           fontWeight: '600',
-          color: '#0c4a6e',
+          color: '#ffffff',
           margin: '0 0 12px 0'
         }}>
           🎉 Welcome to EVA!
         </h2>
         <p style={{
           fontSize: '16px',
-          color: '#0c4a6e',
+          color: '#cccccc',
           margin: '0',
           lineHeight: '1.5'
         }}>
@@ -106,11 +107,11 @@ export default function WhopExperiencePage() {
       }}>
         {/* AI Trainer */}
         <div style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e7eb',
+          backgroundColor: '#2a2a2a',
+          border: '1px solid #333333',
           borderRadius: '12px',
           padding: '24px',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
           transition: 'transform 0.2s, box-shadow 0.2s'
         }}>
           <div style={{
@@ -122,14 +123,14 @@ export default function WhopExperiencePage() {
           <h3 style={{
             fontSize: '20px',
             fontWeight: '600',
-            color: '#1f2937',
+            color: '#ffffff',
             margin: '0 0 12px 0'
           }}>
             AI Trainer
           </h3>
           <p style={{
             fontSize: '14px',
-            color: '#6b7280',
+            color: '#cccccc',
             margin: '0 0 20px 0',
             lineHeight: '1.5'
           }}>
@@ -157,11 +158,11 @@ export default function WhopExperiencePage() {
 
         {/* AI Chat */}
         <div style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e7eb',
+          backgroundColor: '#2a2a2a',
+          border: '1px solid #333333',
           borderRadius: '12px',
           padding: '24px',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
           transition: 'transform 0.2s, box-shadow 0.2s'
         }}>
           <div style={{
@@ -173,14 +174,14 @@ export default function WhopExperiencePage() {
           <h3 style={{
             fontSize: '20px',
             fontWeight: '600',
-            color: '#1f2937',
+            color: '#ffffff',
             margin: '0 0 12px 0'
           }}>
             AI Chat
           </h3>
           <p style={{
             fontSize: '14px',
-            color: '#6b7280',
+            color: '#cccccc',
             margin: '0 0 20px 0',
             lineHeight: '1.5'
           }}>
@@ -208,11 +209,11 @@ export default function WhopExperiencePage() {
 
         {/* Dashboard */}
         <div style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #e5e7eb',
+          backgroundColor: '#2a2a2a',
+          border: '1px solid #333333',
           borderRadius: '12px',
           padding: '24px',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
           transition: 'transform 0.2s, box-shadow 0.2s'
         }}>
           <div style={{
@@ -224,14 +225,14 @@ export default function WhopExperiencePage() {
           <h3 style={{
             fontSize: '20px',
             fontWeight: '600',
-            color: '#1f2937',
+            color: '#ffffff',
             margin: '0 0 12px 0'
           }}>
             Dashboard
           </h3>
           <p style={{
             fontSize: '14px',
-            color: '#6b7280',
+            color: '#cccccc',
             margin: '0 0 20px 0',
             lineHeight: '1.5'
           }}>
@@ -262,8 +263,8 @@ export default function WhopExperiencePage() {
       <div style={{
         textAlign: 'center',
         paddingTop: '20px',
-        borderTop: '1px solid #e5e7eb',
-        color: '#9ca3af',
+        borderTop: '1px solid #333333',
+        color: '#999999',
         fontSize: '14px'
       }}>
         <p style={{ margin: '0' }}>
