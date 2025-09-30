@@ -13,6 +13,117 @@ function MainExperienceContent() {
     setLoading(false);
   }, []);
 
+  const handleStartTraining = async () => {
+    try {
+      // Check if user already has a license key
+      const existingKey = localStorage.getItem("x_license_key");
+      
+      if (existingKey) {
+        // User has a key, go directly to trainer
+        window.location.href = "/trainer";
+        return;
+      }
+
+      // User doesn't have a key, generate one
+      const response = await fetch("/api/license", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.licenseKey) {
+          // Store the license key and redirect to trainer
+          localStorage.setItem("x_license_key", result.licenseKey);
+          window.location.href = "/trainer";
+        } else {
+          console.error("Failed to generate license key");
+          alert("Failed to start training. Please try again.");
+        }
+      } else {
+        console.error("License generation failed:", response.status);
+        alert("Failed to start training. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error starting training:", error);
+      alert("Failed to start training. Please try again.");
+    }
+  };
+
+  const handleStartChatting = async () => {
+    try {
+      // Check if user already has a license key
+      const existingKey = localStorage.getItem("x_license_key");
+      
+      if (existingKey) {
+        // User has a key, go directly to chat
+        window.location.href = "/bot/chat";
+        return;
+      }
+
+      // User doesn't have a key, generate one
+      const response = await fetch("/api/license", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.licenseKey) {
+          // Store the license key and redirect to chat
+          localStorage.setItem("x_license_key", result.licenseKey);
+          window.location.href = "/bot/chat";
+        } else {
+          console.error("Failed to generate license key");
+          alert("Failed to start chatting. Please try again.");
+        }
+      } else {
+        console.error("License generation failed:", response.status);
+        alert("Failed to start chatting. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error starting chat:", error);
+      alert("Failed to start chatting. Please try again.");
+    }
+  };
+
+  const handleViewDashboard = async () => {
+    try {
+      // Check if user already has a license key
+      const existingKey = localStorage.getItem("x_license_key");
+      
+      if (existingKey) {
+        // User has a key, go directly to dashboard
+        window.location.href = "/dashboard";
+        return;
+      }
+
+      // User doesn't have a key, generate one
+      const response = await fetch("/api/license", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success && result.licenseKey) {
+          // Store the license key and redirect to dashboard
+          localStorage.setItem("x_license_key", result.licenseKey);
+          window.location.href = "/dashboard";
+        } else {
+          console.error("Failed to generate license key");
+          alert("Failed to access dashboard. Please try again.");
+        }
+      } else {
+        console.error("License generation failed:", response.status);
+        alert("Failed to access dashboard. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error accessing dashboard:", error);
+      alert("Failed to access dashboard. Please try again.");
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ 
@@ -137,24 +248,25 @@ function MainExperienceContent() {
           }}>
             Train your AI assistant with your unique coaching voice, frameworks, and methodology.
           </p>
-          <a 
-            href="/trainer" 
+          <button 
+            onClick={handleStartTraining}
             style={{
               display: 'inline-block',
               backgroundColor: '#3b82f6',
               color: 'white',
               padding: '12px 24px',
               borderRadius: '8px',
-              textDecoration: 'none',
+              border: 'none',
               fontSize: '14px',
               fontWeight: '500',
-              transition: 'background-color 0.2s'
+              transition: 'background-color 0.2s',
+              cursor: 'pointer'
             }}
             onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = '#2563eb'}
             onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = '#3b82f6'}
           >
             Start Training
-          </a>
+          </button>
         </div>
 
         {/* AI Chat */}
@@ -188,24 +300,25 @@ function MainExperienceContent() {
           }}>
             Chat with your personalized AI assistant that speaks in your coaching voice.
           </p>
-          <a 
-            href="/bot/chat" 
+          <button 
+            onClick={handleStartChatting}
             style={{
               display: 'inline-block',
               backgroundColor: '#3b82f6',
               color: 'white',
               padding: '12px 24px',
               borderRadius: '8px',
-              textDecoration: 'none',
+              border: 'none',
               fontSize: '14px',
               fontWeight: '500',
-              transition: 'background-color 0.2s'
+              transition: 'background-color 0.2s',
+              cursor: 'pointer'
             }}
             onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = '#2563eb'}
             onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = '#3b82f6'}
           >
             Start Chatting
-          </a>
+          </button>
         </div>
 
         {/* Dashboard */}
@@ -239,24 +352,25 @@ function MainExperienceContent() {
           }}>
             View your projects, analytics, and track your AI training progress.
           </p>
-          <a 
-            href="/dashboard" 
+          <button 
+            onClick={handleViewDashboard}
             style={{
               display: 'inline-block',
               backgroundColor: '#3b82f6',
               color: 'white',
               padding: '12px 24px',
               borderRadius: '8px',
-              textDecoration: 'none',
+              border: 'none',
               fontSize: '14px',
               fontWeight: '500',
-              transition: 'background-color 0.2s'
+              transition: 'background-color 0.2s',
+              cursor: 'pointer'
             }}
             onMouseOver={(e) => (e.target as HTMLElement).style.backgroundColor = '#2563eb'}
             onMouseOut={(e) => (e.target as HTMLElement).style.backgroundColor = '#3b82f6'}
           >
             View Dashboard
-          </a>
+          </button>
         </div>
       </div>
 
