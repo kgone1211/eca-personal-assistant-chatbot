@@ -224,16 +224,6 @@ export default function DashboardClient() {
                  <button className="btn" onClick={() => setShowNewTranscript(true)}>
                    + Upload Transcript
                  </button>
-                 <button 
-                   className="btn" 
-                   onClick={() => {
-                     localStorage.removeItem("x_license_key");
-                     window.location.href = "/experiences/main";
-                   }}
-                   style={{ marginLeft: "8px" }}
-                 >
-                   Switch Account
-                 </button>
                </div>
       </header>
 
