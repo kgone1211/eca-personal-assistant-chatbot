@@ -7,6 +7,23 @@ const STRONG_TARGET = 24;
 
 type StatusMap = "q-ok"|"q-short"|"q-empty";
 
+interface TrainingSession {
+  id: number;
+  version: number;
+  createdAt: string;
+  questionCount: number;
+  preview: string;
+  totalCharacters: number;
+}
+
+interface OtterUpload {
+  id: number;
+  createdAt: string;
+  characterCount: number;
+  preview: string;
+  voiceVersion: number;
+}
+
 export default function TrainerClient(){
   const [questions, setQuestions] = useState<string[]>([]);
   const [statusText, setStatusText] = useState("Loading…");
@@ -17,6 +34,9 @@ export default function TrainerClient(){
   const [savedAt, setSavedAt] = useState("");
   const [snips, setSnips] = useState<string[]>([]);
   const [classes, setClasses] = useState<Record<number, StatusMap>>({});
+  const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([]);
+  const [otterUploads, setOtterUploads] = useState<OtterUpload[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const licenseKeyRef = useRef<string | null>(null);
 
   function licenseKey(){
@@ -40,6 +60,17 @@ export default function TrainerClient(){
     const r = await fetch("/api/trainer/questions", { headers: hJSON() });
     const j = await r.json();
     setQuestions(j.questions || []);
+  }
+
+  async function fetchTrainingHistory(){
+    try {
+      const r = await fetch("/api/trainer/history", { headers: hJSON() });
+      const j = await r.json();
+      setTrainingSessions(j.trainingSessions || []);
+      setOtterUploads(j.otterUploads || []);
+    } catch (error) {
+      console.error("Failed to fetch training history:", error);
+    }
   }
 
   async function refreshStatus(localAns?: Record<number,string>){
@@ -105,6 +136,7 @@ export default function TrainerClient(){
       const j = await r.json();
       setStatusText(`Committed. Voice version ${j.voice_version || "updated"}`);
       await refreshStatus();
+      await fetchTrainingHistory(); // Refresh training history to show new version
       alert("Committed. Your bot will now use the latest voice version.");
     } else alert("Commit failed");
   }
@@ -249,6 +281,7 @@ export default function TrainerClient(){
     await fetchQuestions();
     await refreshStatus();
     await loadQ(1);
+    await fetchTrainingHistory();
     setupMic();
   })(); },[]);
 
@@ -313,6 +346,129 @@ export default function TrainerClient(){
             )) : <em>Upload an Otter transcript to enable ideas.</em>}
           </div>
         </aside>
+      </div>
+
+      {/* Training History Section */}
+      <div className="card" style={{ marginTop: "24px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+          <h3 style={{ margin: 0 }}>Training History</h3>
+          <button 
+            className="btn" 
+            onClick={() => setShowHistory(!showHistory)}
+            style={{ fontSize: "12px", padding: "6px 12px" }}
+          >
+            {showHistory ? "Hide" : "Show"} History ({trainingSessions.length} sessions)
+          </button>
+        </div>
+
+        {showHistory && (
+          <div>
+            {trainingSessions.length === 0 ? (
+              <p style={{ color: "var(--muted)", fontStyle: "italic" }}>
+                No training sessions yet. Complete and commit your first training to see it here.
+              </p>
+            ) : (
+              <>
+                <h4 style={{ marginTop: "20px", marginBottom: "12px" }}>Q&A Training Sessions</h4>
+                <div style={{ display: "grid", gap: "12px" }}>
+                  {trainingSessions.map((session, index) => (
+                    <div 
+                      key={session.id} 
+                      className="card"
+                      style={{ 
+                        backgroundColor: index === 0 ? "var(--success-light)" : "var(--bg)",
+                        border: index === 0 ? "2px solid var(--success)" : "1px solid var(--border)",
+                        padding: "16px"
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "8px" }}>
+                        <div>
+                          <h4 style={{ margin: "0 0 4px 0", color: "var(--text)" }}>
+                            Voice Version {session.version}
+                            {index === 0 && <span style={{ marginLeft: "8px", fontSize: "12px", color: "var(--success)" }}>✓ Current</span>}
+                          </h4>
+                          <p style={{ margin: 0, fontSize: "14px", color: "var(--muted)" }}>
+                            {new Date(session.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: "12px", color: "var(--muted)" }}>
+                            {session.questionCount} questions
+                          </div>
+                          <div style={{ fontSize: "12px", color: "var(--muted)" }}>
+                            {(session.totalCharacters / 1000).toFixed(1)}k chars
+                          </div>
+                        </div>
+                      </div>
+                      {session.preview && (
+                        <p style={{ 
+                          margin: "8px 0 0 0", 
+                          fontSize: "13px", 
+                          color: "var(--muted)",
+                          fontStyle: "italic",
+                          lineHeight: "1.4"
+                        }}>
+                          "{session.preview}"
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {otterUploads.length > 0 && (
+                  <>
+                    <h4 style={{ marginTop: "24px", marginBottom: "12px" }}>Otter.ai Uploads</h4>
+                    <div style={{ display: "grid", gap: "12px" }}>
+                      {otterUploads.map((upload) => (
+                        <div 
+                          key={upload.id} 
+                          className="card"
+                          style={{ 
+                            backgroundColor: "var(--bg)",
+                            border: "1px solid var(--border)",
+                            padding: "12px"
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                            <div style={{ flex: 1 }}>
+                              <p style={{ margin: "0 0 4px 0", fontSize: "14px", color: "var(--text)" }}>
+                                {new Date(upload.createdAt).toLocaleDateString()}
+                              </p>
+                              <p style={{ 
+                                margin: 0, 
+                                fontSize: "12px", 
+                                color: "var(--muted)",
+                                fontStyle: "italic"
+                              }}>
+                                {upload.preview}
+                              </p>
+                            </div>
+                            <div style={{ fontSize: "12px", color: "var(--muted)", marginLeft: "12px" }}>
+                              {(upload.characterCount / 1000).toFixed(1)}k chars
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div style={{ 
+                  marginTop: "20px", 
+                  padding: "12px", 
+                  backgroundColor: "var(--info-light)",
+                  border: "1px solid var(--info)",
+                  borderRadius: "8px"
+                }}>
+                  <p style={{ margin: 0, fontSize: "14px", lineHeight: "1.5" }}>
+                    <strong>💡 How it works:</strong> Each time you commit your training, a new voice version is created. 
+                    Your AI chatbot always uses the <strong>latest version</strong> to ensure it speaks with your most up-to-date coaching voice and methodology.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
