@@ -90,13 +90,18 @@ export default function DashboardClient() {
   const [showNewTranscript, setShowNewTranscript] = useState(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
 
-  const licenseKeyRef = { current: "dev-key-123" };
+  const licenseKeyRef = { current: null as string | null };
 
   function licenseKey() {
     if (!licenseKeyRef.current) {
-      const s = "dev-key-123";
-      localStorage.setItem("x_license_key", s);
-      licenseKeyRef.current = s;
+      const stored = localStorage.getItem("x_license_key");
+      if (stored) {
+        licenseKeyRef.current = stored;
+      } else {
+        // No license key, redirect to onboarding
+        window.location.href = "/onboarding";
+        return "";
+      }
     }
     return licenseKeyRef.current!;
   }
@@ -189,14 +194,24 @@ export default function DashboardClient() {
           <img src="/logo.svg" alt="ECA Logo" className="logo" />
           <h1>Client Dashboard</h1>
         </div>
-        <div>
-          <button className="btn btn-primary" onClick={() => setShowNewProject(true)}>
-            + New Project
-          </button>
-          <button className="btn" onClick={() => setShowNewTranscript(true)}>
-            + Upload Transcript
-          </button>
-        </div>
+               <div>
+                 <button className="btn btn-primary" onClick={() => setShowNewProject(true)}>
+                   + New Project
+                 </button>
+                 <button className="btn" onClick={() => setShowNewTranscript(true)}>
+                   + Upload Transcript
+                 </button>
+                 <button 
+                   className="btn" 
+                   onClick={() => {
+                     localStorage.removeItem("x_license_key");
+                     window.location.href = "/onboarding";
+                   }}
+                   style={{ marginLeft: "8px" }}
+                 >
+                   Switch Account
+                 </button>
+               </div>
       </header>
 
       {/* Overview Metrics */}

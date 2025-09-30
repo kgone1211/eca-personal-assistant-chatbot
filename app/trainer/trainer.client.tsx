@@ -21,10 +21,14 @@ export default function TrainerClient(){
 
   function licenseKey(){
     if (!licenseKeyRef.current) {
-      // For development, use a default key
-      const s = "dev-key-123";
-      localStorage.setItem("x_license_key", s);
-      licenseKeyRef.current = s;
+      const stored = localStorage.getItem("x_license_key");
+      if (stored) {
+        licenseKeyRef.current = stored;
+      } else {
+        // No license key, redirect to onboarding
+        window.location.href = "/onboarding";
+        return "";
+      }
     }
     return licenseKeyRef.current!;
   }

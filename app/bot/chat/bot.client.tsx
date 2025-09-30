@@ -17,13 +17,18 @@ export default function BotChatClient() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const licenseKeyRef = { current: "dev-key-123" };
+  const licenseKeyRef = { current: null as string | null };
 
   function licenseKey() {
     if (!licenseKeyRef.current) {
-      const s = "dev-key-123";
-      localStorage.setItem("x_license_key", s);
-      licenseKeyRef.current = s;
+      const stored = localStorage.getItem("x_license_key");
+      if (stored) {
+        licenseKeyRef.current = stored;
+      } else {
+        // No license key, redirect to onboarding
+        window.location.href = "/onboarding";
+        return "";
+      }
     }
     return licenseKeyRef.current!;
   }
