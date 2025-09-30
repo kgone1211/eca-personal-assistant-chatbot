@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { grok, GrokTrendAnalysis } from "@/lib/grok";
-import { authUser } from "../../_utils";
+import { authUser } from "../_utils";
 
 export async function GET(req: NextRequest) {
   try {
