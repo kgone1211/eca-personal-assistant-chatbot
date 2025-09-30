@@ -23,7 +23,7 @@ export default function WhopExperiencePage() {
         fontSize: '16px',
         color: '#666'
       }}>
-        Loading EVA Assistant...
+        Loading ECA Assistant...
       </div>
     );
   }
@@ -51,7 +51,7 @@ export default function WhopExperiencePage() {
           color: '#ffffff',
           margin: '0 0 8px 0'
         }}>
-          EVA Personal Assistant
+          ECA Personal Assistant
         </h1>
         <p style={{
           fontSize: '16px',
@@ -86,7 +86,7 @@ export default function WhopExperiencePage() {
           color: '#ffffff',
           margin: '0 0 12px 0'
         }}>
-          🎉 Welcome to EVA!
+          🎉 Welcome to ECA!
         </h2>
         <p style={{
           fontSize: '16px',
