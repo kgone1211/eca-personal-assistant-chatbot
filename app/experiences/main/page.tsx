@@ -35,7 +35,11 @@ function MainExperienceContent() {
         if (result.success && result.licenseKey) {
           // Store the license key and redirect to trainer
           localStorage.setItem("x_license_key", result.licenseKey);
-          window.location.href = "/trainer";
+          console.log("License key stored, redirecting to trainer");
+          // Add a small delay to ensure localStorage is updated
+          setTimeout(() => {
+            window.location.href = "/trainer";
+          }, 100);
         } else {
           console.error("Failed to generate license key");
           alert("Failed to start training. Please try again.");
@@ -72,7 +76,11 @@ function MainExperienceContent() {
         if (result.success && result.licenseKey) {
           // Store the license key and redirect to chat
           localStorage.setItem("x_license_key", result.licenseKey);
-          window.location.href = "/bot/chat";
+          console.log("License key stored, redirecting to chat");
+          // Add a small delay to ensure localStorage is updated
+          setTimeout(() => {
+            window.location.href = "/bot/chat";
+          }, 100);
         } else {
           console.error("Failed to generate license key");
           alert("Failed to start chatting. Please try again.");
@@ -109,7 +117,11 @@ function MainExperienceContent() {
         if (result.success && result.licenseKey) {
           // Store the license key and redirect to dashboard
           localStorage.setItem("x_license_key", result.licenseKey);
-          window.location.href = "/dashboard";
+          console.log("License key stored, redirecting to dashboard");
+          // Add a small delay to ensure localStorage is updated
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 100);
         } else {
           console.error("Failed to generate license key");
           alert("Failed to access dashboard. Please try again.");

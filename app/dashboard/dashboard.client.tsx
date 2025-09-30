@@ -100,6 +100,7 @@ export default function DashboardClient() {
         licenseKeyRef.current = stored;
       } else {
         // No license key, redirect to main experience page
+        console.log("No license key found, redirecting to main page");
         window.location.href = "/experiences/main";
         return "";
       }
