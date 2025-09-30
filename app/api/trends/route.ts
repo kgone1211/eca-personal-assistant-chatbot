@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { grok, GrokTrendAnalysis } from "@/lib/grok";
-import { authUser } from "../_utils";
+import { authUser } from "../../_utils";
 
 export async function GET(req: NextRequest) {
-  const { user } = await authUser(req);
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
+    console.log("Trend analysis API called");
+    const { user } = await authUser(req);
+    console.log("Auth result:", { user: user ? { id: user.id, licenseKey: user.licenseKey } : null });
+    
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    console.log("Fetching data for user:", user.id);
     // Fetch all relevant data for trend analysis
+    console.log("Fetching transcripts, training blobs, and insights...");
     const [transcripts, trainingBlobs, insights] = await Promise.all([
       // Get transcripts with analysis
       prisma.transcript.findMany({
@@ -33,6 +38,12 @@ export async function GET(req: NextRequest) {
       })
     ]);
 
+    console.log("Data fetched:", {
+      transcripts: transcripts.length,
+      trainingBlobs: trainingBlobs.length,
+      insights: insights.length
+    });
+
     // Prepare data for Grok analysis
     const analysisData = {
       transcripts: transcripts.map(t => ({
@@ -56,9 +67,12 @@ export async function GET(req: NextRequest) {
     };
 
     // Get trend analysis from Grok
+    console.log("Calling Grok analysis...");
     const trends: GrokTrendAnalysis = await grok.analyzeTrends(analysisData);
+    console.log("Grok analysis completed");
 
     // Store trend analysis results for caching
+    console.log("Storing trend analysis results...");
     await prisma.trendAnalysis.create({
       data: {
         userId: user.id,
@@ -66,6 +80,7 @@ export async function GET(req: NextRequest) {
         createdAt: new Date()
       }
     });
+    console.log("Trend analysis stored successfully");
 
     return NextResponse.json({
       trends,

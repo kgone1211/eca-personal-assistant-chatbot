@@ -54,13 +54,18 @@ export default function TrendAnalysisPanel() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'topics' | 'patterns' | 'insights' | 'recommendations'>('topics');
 
-  const licenseKeyRef = { current: "dev-key-123" };
+  const licenseKeyRef = { current: null as string | null };
 
   function licenseKey() {
     if (!licenseKeyRef.current) {
-      const s = "dev-key-123";
-      localStorage.setItem("x_license_key", s);
-      licenseKeyRef.current = s;
+      const stored = localStorage.getItem("x_license_key");
+      if (stored) {
+        licenseKeyRef.current = stored;
+      } else {
+        // No license key, redirect to onboarding
+        window.location.href = "/onboarding";
+        return "";
+      }
     }
     return licenseKeyRef.current!;
   }
@@ -70,11 +75,23 @@ export default function TrendAnalysisPanel() {
   async function fetchTrendAnalysis() {
     try {
       setLoading(true);
+      setError(null);
+      console.log("Fetching trend analysis with license key:", licenseKey());
+      
       const response = await fetch("/api/trends", { headers: headers() });
-      if (!response.ok) throw new Error("Failed to fetch trend analysis");
+      console.log("Trend analysis response:", response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Trend analysis error:", errorText);
+        throw new Error(`Failed to fetch trend analysis: ${response.status} ${errorText}`);
+      }
+      
       const result = await response.json();
+      console.log("Trend analysis result:", result);
       setData(result);
     } catch (err) {
+      console.error("Trend analysis fetch error:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
