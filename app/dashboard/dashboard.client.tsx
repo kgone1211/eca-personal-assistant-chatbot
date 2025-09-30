@@ -112,11 +112,14 @@ export default function DashboardClient() {
 
   async function fetchUserInfo() {
     try {
+      console.log("Fetching user info for license key:", licenseKey());
       const response = await fetch(`/api/whop-auth?license_key=${encodeURIComponent(licenseKey())}`, {
         headers: headers()
       });
+      console.log("User info response:", response.status, response.statusText);
       if (response.ok) {
         const result = await response.json();
+        console.log("User info result:", result);
         if (result.success) {
           setUserInfo(result.user);
         }
@@ -214,7 +217,10 @@ export default function DashboardClient() {
           <div>
             <h1>Client Dashboard</h1>
             <p className="user-welcome">
-              Welcome back, {userInfo?.firstName || userInfo?.username || 'User'}!
+              {userInfo?.firstName || userInfo?.username 
+                ? `Welcome back, ${userInfo.firstName || userInfo.username}!`
+                : 'Welcome to your ECA Personal Assistant!'
+              }
             </p>
           </div>
         </div>
