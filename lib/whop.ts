@@ -34,3 +34,58 @@ export async function verifyLicense(licenseKey?: string): Promise<boolean> {
   // For example, check against a database of valid keys
   return true;
 }
+
+export interface WhopUser {
+  id: string;
+  email: string;
+  username: string;
+  first_name?: string;
+  last_name?: string;
+  profile_picture?: string;
+}
+
+export async function fetchWhopUser(whopToken: string): Promise<WhopUser | null> {
+  try {
+    const response = await fetch('https://api.whop.com/api/v2/me', {
+      headers: {
+        'Authorization': `Bearer ${whopToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Whop API error:', response.status, response.statusText);
+      return null;
+    }
+
+    const userData = await response.json();
+    
+    return {
+      id: userData.id,
+      email: userData.email,
+      username: userData.username,
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+      profile_picture: userData.profile_picture,
+    };
+  } catch (error) {
+    console.error('Error fetching Whop user:', error);
+    return null;
+  }
+}
+
+export async function validateWhopToken(whopToken: string): Promise<boolean> {
+  try {
+    const response = await fetch('https://api.whop.com/api/v2/me', {
+      headers: {
+        'Authorization': `Bearer ${whopToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Error validating Whop token:', error);
+    return false;
+  }
+}

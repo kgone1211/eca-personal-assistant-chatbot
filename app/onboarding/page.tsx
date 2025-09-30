@@ -8,7 +8,47 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [licenseKey, setLicenseKey] = useState("");
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [whopToken, setWhopToken] = useState("");
   const router = useRouter();
+
+  const handleWhopAuth = async () => {
+    if (!whopToken.trim()) {
+      setError("Please enter your Whop token");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/whop-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ whopToken: whopToken.trim() }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Store the license key
+        localStorage.setItem("x_license_key", result.licenseKey);
+        setLicenseKey(result.licenseKey);
+        setUserInfo(result.user);
+        
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 2000);
+      } else {
+        setError(result.error || "Failed to authenticate with Whop");
+      }
+    } catch (err) {
+      setError("Failed to authenticate with Whop. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGetStarted = async () => {
     setLoading(true);
@@ -53,6 +93,13 @@ export default function OnboardingPage() {
           <div className="success-card">
             <h2>🎉 Account Created Successfully!</h2>
             <p>Your personal AI assistant is ready to be trained in your unique coaching voice.</p>
+            
+            {userInfo && (
+              <div className="user-info">
+                <h3>Welcome, {userInfo.firstName || userInfo.username}!</h3>
+                <p>Your Whop account has been linked successfully.</p>
+              </div>
+            )}
             
             <div className="license-info">
               <h3>Your License Key:</h3>
@@ -119,6 +166,41 @@ export default function OnboardingPage() {
             </div>
           </div>
 
+          {/* Whop Authentication */}
+          <div className="whop-auth-section">
+            <h3>🔗 Link Your Whop Account</h3>
+            <p>Connect your Whop account to personalize your experience with your name and profile.</p>
+            
+            <div className="form-group">
+              <label htmlFor="whopToken" className="form-label">Whop Access Token</label>
+              <input
+                id="whopToken"
+                type="text"
+                value={whopToken}
+                onChange={(e) => setWhopToken(e.target.value)}
+                placeholder="Enter your Whop access token"
+                className="form-input"
+                disabled={loading}
+              />
+              <small className="form-help">
+                Get your access token from your Whop account settings
+              </small>
+            </div>
+
+            <button
+              onClick={handleWhopAuth}
+              disabled={loading || !whopToken.trim()}
+              className="btn btn-secondary btn-large"
+              style={{ width: "100%", marginBottom: "1rem" }}
+            >
+              {loading ? "Linking Account..." : "Link Whop Account"}
+            </button>
+          </div>
+
+          <div className="divider">
+            <span>OR</span>
+          </div>
+
           {error && (
             <div className="error-message">
               {error}
@@ -131,7 +213,7 @@ export default function OnboardingPage() {
             className="btn btn-primary btn-large"
             style={{ width: "100%" }}
           >
-            {loading ? "Creating Your Account..." : "Create My AI Assistant"}
+            {loading ? "Creating Your Account..." : "Create Anonymous Account"}
           </button>
 
           <div className="privacy-note">

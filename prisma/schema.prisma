@@ -9,8 +9,14 @@ generator client {
 
 model User {
   id             Int       @id @default(autoincrement())
-  email          String?   
+  email          String?
   licenseKey     String    @unique
+  whopId         String?   @unique
+  whopUsername   String?
+  whopEmail      String?
+  whopFirstName  String?
+  whopLastName   String?
+  whopProfilePic String?
   createdAt      DateTime  @default(now())
   lastTrainedAt  DateTime?
   timezone       String    @default("America/New_York")

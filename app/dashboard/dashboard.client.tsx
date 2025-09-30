@@ -89,6 +89,7 @@ export default function DashboardClient() {
   const [showNewProject, setShowNewProject] = useState(false);
   const [showNewTranscript, setShowNewTranscript] = useState(false);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
 
   const licenseKeyRef = { current: null as string | null };
 
@@ -107,6 +108,22 @@ export default function DashboardClient() {
   }
 
   const headers = () => ({ "X-License-Key": licenseKey(), "Content-Type": "application/json" });
+
+  async function fetchUserInfo() {
+    try {
+      const response = await fetch(`/api/whop-auth?license_key=${encodeURIComponent(licenseKey())}`, {
+        headers: headers()
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setUserInfo(result.user);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch user info:", error);
+    }
+  }
 
   async function fetchDashboard() {
     try {
@@ -166,6 +183,7 @@ export default function DashboardClient() {
 
   useEffect(() => {
     fetchDashboard();
+    fetchUserInfo();
   }, []);
 
   if (loading) {
@@ -192,7 +210,14 @@ export default function DashboardClient() {
       <header>
         <div className="logo-container">
           <img src="/logo.svg" alt="ECA Logo" className="logo" />
-          <h1>Client Dashboard</h1>
+          <div>
+            <h1>Client Dashboard</h1>
+            {userInfo && (
+              <p className="user-welcome">
+                Welcome back, {userInfo.firstName || userInfo.username || 'User'}!
+              </p>
+            )}
+          </div>
         </div>
                <div>
                  <button className="btn btn-primary" onClick={() => setShowNewProject(true)}>
