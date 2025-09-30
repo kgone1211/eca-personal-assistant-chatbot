@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function MainExperiencePage() {
+function MainExperienceContent() {
   const searchParams = useSearchParams();
   const experienceId = searchParams.get("experienceId");
   const [loading, setLoading] = useState(true);
@@ -273,5 +273,28 @@ export default function MainExperiencePage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function MainExperiencePage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#1a1a1a',
+        color: '#ffffff',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ margin: '0 0 16px 0', fontSize: '24px' }}>ECA Personal Assistant</h2>
+          <p style={{ margin: '0', color: '#cccccc' }}>Loading...</p>
+        </div>
+      </div>
+    }>
+      <MainExperienceContent />
+    </Suspense>
   );
 }

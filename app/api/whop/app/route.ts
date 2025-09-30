@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const experienceId = url.searchParams.get("experienceId");
-    const companyId = url.searchParams.get("companyId");
+    const { searchParams } = new URL(req.url);
+    const experienceId = searchParams.get("experienceId");
+    const companyId = searchParams.get("companyId");
     
     // This is the proper Whop app integration
     // Your app gets embedded in Whop's platform
