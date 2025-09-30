@@ -14,6 +14,7 @@ export default function BotChatClient() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadingHistory, setLoadingHistory] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,6 +41,61 @@ export default function BotChatClient() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const loadChatHistory = async () => {
+    try {
+      setLoadingHistory(true);
+      const response = await fetch("/api/bot/chat/history", {
+        headers: { "X-License-Key": licenseKey() }
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        // Convert database messages to frontend format
+        const historyMessages: Message[] = result.conversations
+          .flatMap((conv: any) => conv.messages)
+          .map((msg: any) => ({
+            id: msg.id.toString(),
+            role: msg.role as "user" | "assistant",
+            content: msg.content,
+            timestamp: new Date(msg.createdAt)
+          }));
+        
+        setMessages(historyMessages);
+      }
+    } catch (error) {
+      console.error("Failed to load chat history:", error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    loadChatHistory();
+  }, []);
+
+  const clearChatHistory = async () => {
+    if (!confirm("Are you sure you want to clear all chat history? This cannot be undone.")) {
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/bot/chat/history", {
+        method: "DELETE",
+        headers: { "X-License-Key": licenseKey() }
+      });
+      
+      if (response.ok) {
+        setMessages([]);
+        alert("Chat history cleared successfully!");
+      } else {
+        alert("Failed to clear chat history. Please try again.");
+      }
+    } catch (error) {
+      console.error("Failed to clear chat history:", error);
+      alert("Failed to clear chat history. Please try again.");
+    }
+  };
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -110,16 +166,39 @@ export default function BotChatClient() {
     <div className="wrap">
       <div className="chat-container">
         <div className="chat-header">
-          <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>
-            AI Assistant Chat
-          </h2>
-          <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "var(--muted)" }}>
-            Trained with your coaching voice and ECA methodology
-          </p>
+          <div>
+            <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>
+              AI Assistant Chat
+            </h2>
+            <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "var(--muted)" }}>
+              Trained with your coaching voice and ECA methodology
+            </p>
+          </div>
+          {messages.length > 0 && (
+            <button 
+              className="btn" 
+              onClick={clearChatHistory}
+              style={{ 
+                fontSize: "12px", 
+                padding: "6px 12px",
+                backgroundColor: "var(--error)",
+                color: "white",
+                border: "none",
+                borderRadius: "6px"
+              }}
+            >
+              Clear History
+            </button>
+          )}
         </div>
 
         <div className="chat-messages">
-          {messages.length === 0 ? (
+          {loadingHistory ? (
+            <div className="empty-state">
+              <h3>Loading your chat history...</h3>
+              <p>Retrieving your previous conversations with your AI assistant.</p>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="empty-state">
               <h3>Welcome to your AI Assistant!</h3>
               <p>
