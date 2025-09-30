@@ -195,6 +195,17 @@ export default function OnboardingPage() {
             >
               {loading ? "Linking Account..." : "Link Whop Account"}
             </button>
+
+            <div className="oauth-section">
+              <p>Or use Whop OAuth:</p>
+              <a
+                href={`https://whop.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_WHOP_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://eca-personal-assistant-chatbot.vercel.app/api/whop/callback')}&response_type=code&scope=read:user`}
+                className="btn btn-primary btn-large"
+                style={{ width: "100%", marginBottom: "1rem", textDecoration: "none" }}
+              >
+                🔗 Connect with Whop
+              </a>
+            </div>
           </div>
 
           <div className="divider">
