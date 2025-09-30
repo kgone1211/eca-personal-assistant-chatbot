@@ -99,8 +99,8 @@ export default function DashboardClient() {
       if (stored) {
         licenseKeyRef.current = stored;
       } else {
-        // No license key, redirect to onboarding
-        window.location.href = "/onboarding";
+        // No license key, redirect to main experience page
+        window.location.href = "/experiences/main";
         return "";
       }
     }
@@ -228,7 +228,7 @@ export default function DashboardClient() {
                    className="btn" 
                    onClick={() => {
                      localStorage.removeItem("x_license_key");
-                     window.location.href = "/onboarding";
+                     window.location.href = "/experiences/main";
                    }}
                    style={{ marginLeft: "8px" }}
                  >

@@ -62,8 +62,8 @@ export default function TrendAnalysisPanel() {
       if (stored) {
         licenseKeyRef.current = stored;
       } else {
-        // No license key, redirect to onboarding
-        window.location.href = "/onboarding";
+        // No license key, redirect to main experience page
+        window.location.href = "/experiences/main";
         return "";
       }
     }
