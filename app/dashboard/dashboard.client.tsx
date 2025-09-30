@@ -212,11 +212,9 @@ export default function DashboardClient() {
           <img src="/logo.svg" alt="ECA Logo" className="logo" />
           <div>
             <h1>Client Dashboard</h1>
-            {userInfo && (
-              <p className="user-welcome">
-                Welcome back, {userInfo.firstName || userInfo.username || 'User'}!
-              </p>
-            )}
+            <p className="user-welcome">
+              Welcome back, {userInfo?.firstName || userInfo?.username || 'User'}!
+            </p>
           </div>
         </div>
                <div>
